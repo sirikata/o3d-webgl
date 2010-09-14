@@ -814,10 +814,41 @@ o3d.ParamInteger.prototype.applyToLocation = function(gl, location) {
 /**
  * Called to specify the value of a uniform variable.
  * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Int32Array} values Array of integer values to apply to this location.
+ */
+o3d.ParamInteger.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Int32Array(length);
+  for (var i = 0; i < length; i++) {
+    values[i] = params.getParam(i).value;
+  }
+  gl.uniform1iv(loc, values);
+};
+
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
  * @param {WebGLUniformLocation} location The location to which to apply.
  */
 o3d.ParamBoolean.prototype.applyToLocation = function(gl, location) {
   gl.uniform1i(location, this.value);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Int32Array} values Array of zero or non-zero values to apply.
+ */
+o3d.ParamBoolean.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Int32Array(length);
+  for (var i = 0; i < length; i++) {
+    values[i] = params.getParam(i).value ? 1 : 0;
+  }
+  gl.uniform1iv(loc, values);
 };
 
 /**
@@ -832,10 +863,42 @@ o3d.ParamFloat.prototype.applyToLocation = function(gl, location) {
 /**
  * Called to specify the value of a uniform variable.
  * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Float32Array} values Array of values to apply to this location.
+ */
+o3d.ParamFloat.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Float32Array(length);
+  for (var i = 0; i < length; i++) {
+    values[i] = params.getParam(i).value;
+  }
+  gl.uniform1fv(loc, values);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
  * @param {WebGLUniformLocation} location The location to which to apply.
  */
 o3d.ParamFloat2.prototype.applyToLocation = function(gl, location) {
   gl.uniform2fv(location, this.value);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Float32Array} values Array of values to apply to this location.
+ */
+o3d.ParamFloat2.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Float32Array(length * 2);
+  for (var i = 0; i < length; i++) {
+    var v = params.getParam(i).value;
+    values[i * 2] = v[0];
+    values[i * 2 + 1] = v[1];
+  }
+  gl.uniform2fv(loc, values);
 };
 
 /**
@@ -850,10 +913,47 @@ o3d.ParamFloat3.prototype.applyToLocation = function(gl, location) {
 /**
  * Called to specify the value of a uniform variable.
  * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Float32Array} values Array of values to apply to this location.
+ */
+o3d.ParamFloat3.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Float32Array(length * 3);
+  for (var i = 0; i < length; i++) {
+    var v = params.getParam(i).value;
+    values[i * 3] = v[0];
+    values[i * 3 + 1] = v[1];
+    values[i * 3 + 2] = v[1];
+  }
+  gl.uniform3fv(loc, values);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
  * @param {WebGLUniformLocation} location The location to which to apply.
  */
 o3d.ParamFloat4.prototype.applyToLocation = function(gl, location) {
   gl.uniform4fv(location, this.value);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Float32Array} values Array of values to apply to this location.
+ */
+o3d.ParamFloat4.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Float32Array(length * 4);
+  for (var i = 0; i < length; i++) {
+    var v = params.getParam(i).value;
+    values[i * 4] = v[0];
+    values[i * 4 + 1] = v[1];
+    values[i * 4 + 2] = v[2];
+    values[i * 4 + 3] = v[3];
+  }
+  gl.uniform4fv(loc, values);
 };
 
 /**
@@ -865,6 +965,26 @@ o3d.ParamMatrix4.prototype.applyToLocation = function(gl, location) {
   gl.uniformMatrix4fv(location,
                       false,
                       this.value);
+};
+
+/**
+ * Called to specify the value of a uniform variable.
+ * @param {WebGLContext} gl The current context.
+ * @param {WebGLUniformLocation} location The location of the array to apply to.
+ * @param {Float32Array} values Flat array of matrices to apply.
+ */
+o3d.ParamMatrix4.prototype.applyParamsToLocation = function(gl, loc, params) {
+  var length = params.length;
+  var values = new Float32Array(length * 16);
+  for (var i = 0; i < length; i++) {
+    var v = params.getParam(i).value;
+    for (var j = 0; j < 16; j++) {
+      values[i * 16 + j] = v[j];
+      values[i * 16 + 2] = v[2];
+      values[i * 16 + 3] = v[3];
+    }
+  }
+  gl.uniformMatrix4fv(loc, values);
 };
 
 /**
@@ -883,6 +1003,12 @@ o3d.ParamParamArray.prototype.applyToLocations = function(gl, locationArray) {
     // Cannot have a ParamArray of ParamArrays, so safe to call applyToLocation
     computedValue.getParam(i).applyToLocation(gl, locationArray[i]);
   }
+};
+
+o3d.ParamParamArray.prototype.applyToLocation = function(gl, location) {
+  var computedValue = this.value;
+  var firstParam = computedValue.getParam(0);
+  firstParam.applyParamsToLocation(gl, location, computedValue);
 };
 
 /**

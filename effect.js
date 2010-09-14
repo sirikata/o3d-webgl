@@ -309,6 +309,7 @@ o3d.Effect.prototype.getUniforms_ =
       this.uniforms_[baseName] = {
           info: {name: baseName, size: info.size, type: info.type},
           kind: o3d.Effect.ARRAY,
+          location: this.gl.getUniformLocation(this.program_, baseName),
           locations: locations /* mind the s */
       };
     } else {
@@ -551,11 +552,7 @@ o3d.Effect.prototype.searchForParams_ = function(object_list) {
         var uniformInfo = this.uniforms_[name];
         var param = obj.getParam(name);
         if (param) {
-          if (uniformInfo.kind == o3d.Effect.ARRAY) {
-            param.applyToLocations(this.gl, uniformInfo.locations);
-          } else {
-            param.applyToLocation(this.gl, uniformInfo.location);
-          }
+          param.applyToLocation(this.gl, uniformInfo.location);
           delete unfilledMap[name];
         }
       }
