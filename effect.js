@@ -435,11 +435,13 @@ o3d.Effect.prototype.createUniformParameters =
       switch (uniformData.kind) {
         case o3d.Effect.ARRAY:
           var param = param_object.createParam(name, 'ParamParamArray');
-          var array = new o3d.ParamArray;
-          array.gl = this.gl;
-          array.resize(uniformData.info.size,
-              paramTypes[uniformData.info.type]);
-          param.value = array;
+          if (param) {
+            var array = new o3d.ParamArray;
+            array.gl = this.gl;
+            array.resize(uniformData.info.size,
+                paramTypes[uniformData.info.type]);
+            param.value = array;
+          }
           break;
         case o3d.Effect.STRUCT:
           o3d.notImplemented();
